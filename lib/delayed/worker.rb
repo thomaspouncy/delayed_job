@@ -121,8 +121,8 @@ module Delayed
         Timeout.timeout(self.class.max_run_time.to_i) { job.invoke_job }
         job.destroy
       end
-      # memory = Oink::Instrumentation::MemorySnapshot.memory
-      #  Rails.logger.info("Memory usage: #{memory}")
+      memory = Oink::Instrumentation::MemorySnapshot.memory
+      Rails.logger.info("Memory usage from Oink: #{memory}")
 
       say "#{job.name} completed after %.4f" % runtime
       return true  # did work
@@ -165,7 +165,7 @@ module Delayed
     def max_attempts(job)
       job.max_attempts || self.class.max_attempts
     end
-    
+
   protected
 
     def handle_failed_job(job, error)
