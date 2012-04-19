@@ -122,7 +122,7 @@ module Delayed
         job.destroy
       end
       memory = Oink::Instrumentation::MemorySnapshot.memory
-      logger.info("Memory usage: #{memory} | PID: #{$$}")
+      logger.info("Memory usage: #{memory}")
 
       say "#{job.name} completed after %.4f" % runtime
       return true  # did work
