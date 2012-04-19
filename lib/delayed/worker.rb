@@ -121,6 +121,9 @@ module Delayed
         Timeout.timeout(self.class.max_run_time.to_i) { job.invoke_job }
         job.destroy
       end
+      memory = Oink::Instrumentation::MemorySnapshot.memory
+      logger.info("Memory usage: #{memory} | PID: #{$$}")
+
       say "#{job.name} completed after %.4f" % runtime
       return true  # did work
     rescue DeserializationError => error
