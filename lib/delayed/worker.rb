@@ -119,8 +119,10 @@ module Delayed
     def run(job)
       runtime =  Benchmark.realtime do
         Timeout.timeout(self.class.max_run_time.to_i) { job.invoke_job }
-        job_handler_class = job.payload_object.object.class.to_s
-        job_handler_id = job.payload_object.object.id.to_s
+        if job.payload_object.is_a?(Delayed::PerformableMethod)
+          job_handler_class = job.payload_object.object.class.to_s
+          job_handler_id = job.payload_object.object.id.to_s
+        end
         job.destroy
           
         memory = Oink::Instrumentation::MemorySnapshot.memory
