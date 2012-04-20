@@ -119,10 +119,13 @@ module Delayed
     def run(job)
       runtime =  Benchmark.realtime do
         Timeout.timeout(self.class.max_run_time.to_i) { job.invoke_job }
+        job_handler_class = job.payload_object.class.to_s
+        job_handler_id = job.payload_object.id.to_s
         job.destroy
+          
+        memory = Oink::Instrumentation::MemorySnapshot.memory
+        Rails.logger.info("Memory usage from Oink: #{memory} for class #{job_handler_class} and id #{job_handler_id}")
       end
-      memory = Oink::Instrumentation::MemorySnapshot.memory
-      Rails.logger.info("Memory usage from Oink: #{memory}")
 
       say "#{job.name} completed after %.4f" % runtime
       return true  # did work
